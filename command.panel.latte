@@ -1,49 +1,49 @@
-<h1>SchemaTool</h1>
+<h1>CommandsTool</h1>
 
 <div class="nette-inner">
-	<div id="nette-debug-schema-tool-status"></div>
-	
+	<div id="nette-debug-command-tool-status"></div>
+
 	<table>
 		<tr>
 			<th>Create</th>
-			<td><input type="submit" value="Execute" class="nette-debug-schema-tool-ajax" name="create"></td>
+			<td><input type="submit" value="Execute" class="nette-debug-command-tool-ajax" name="create"></td>
 		</tr>
 		<tr>
 			<th>Update</th>
-			<td><input type="submit" value="Execute" class="nette-debug-schema-tool-ajax" name="update"></td>
+			<td><input type="submit" value="Execute" class="nette-debug-command-tool-ajax" name="update"></td>
 		</tr>
 		<tr>
 			<th>Drop</th>
-			<td><input type="submit" value="Execute" class="nette-debug-schema-tool-ajax" name="drop"></td>
+			<td><input type="submit" value="Execute" class="nette-debug-command-tool-ajax" name="drop"></td>
 		</tr>
 	</table>
 </div>
 
 <style type="text/css">
-#nette-debug-schema-tool {
+#nette-debug-command-tool {
 	width: 100%;
 }
 
-#nette-debug-schema-tool input {
+#nette-debug-command-tool input {
 	padding: 2px;
 	background: #eee;
 	border: 1px solid #ccc;
 }
 
-#nette-debug-schema-tool input:hover {
+#nette-debug-command-tool input:hover {
 	background: #666;
 	color: #fff;
 	border: 1px solid #444;
 }
 
-#nette-debug-schema-tool .success {
+#nette-debug-command-tool .success {
 	background: #A3F06C;
 	border: 1px solid #5FA92A;
 	padding: 1em;
 	margin-bottom: 5px;
 }
 
-#nette-debug-schema-tool .error {
+#nette-debug-command-tool .error {
 	background: #FAD3C4;
 	border: 1px solid #D4C4C9;
 	padding: 1em;
@@ -58,10 +58,10 @@
 
 	var $ = Nette.Q.factory;
 
-	var schemaPanel = {
+	var commandPanel = {
 		init: function () {
-			$('.nette-debug-schema-tool-ajax').bind('click', function (e) {
-				schemaPanel.commit(this.name);
+			$('.nette-debug-command-tool-ajax').bind('click', function (e) {
+				commandPanel.commit(this.name);
 			})
 		},
 
@@ -71,7 +71,7 @@
 			xmlHttp.onreadystatechange = function() {
 				if (xmlHttp.readyState == 4) {
 
-					var status = $('#nette-debug-schema-tool-status').dom();
+					var status = $('#nette-debug-command-tool-status').dom();
 
 					if (xmlHttp.status == 200) {
 						message = JSON.parse(xmlHttp.responseText);
@@ -85,14 +85,14 @@
 				}
 			}
 			xmlHttp.open("POST", <?php echo json_encode(\Nette\Environment::getApplication()->getPresenter()->link('this')); ?>, true);
-			xmlHttp.setRequestHeader('X-Schema-Client', 'devel');
+			xmlHttp.setRequestHeader('X-CommandTool-Client', 'devel');
 			xmlHttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 			xmlHttp.send(cmd);
 		}
 	}
 
 
-	schemaPanel.init();
+	commandPanel.init();
 
 })();
 
