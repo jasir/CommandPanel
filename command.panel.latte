@@ -1,49 +1,51 @@
 <h1>CommandsTool</h1>
 
 <div class="nette-inner">
-	<div id="nette-debug-command-tool-status"></div>
+<div class="nette-addons-command">
+	<div class="nette-addons-command-status" id="nette-addons-command-status"></div>
 
 	<table>
 		<tr>
 			<th>Create</th>
-			<td><input type="submit" value="Execute" class="nette-debug-command-tool-ajax" name="create"></td>
+			<td><input type="submit" value="Execute" class="nette-addons-command-ajax" name="create"></td>
 		</tr>
 		<tr>
 			<th>Update</th>
-			<td><input type="submit" value="Execute" class="nette-debug-command-tool-ajax" name="update"></td>
+			<td><input type="submit" value="Execute" class="nette-addons-command-ajax" name="update"></td>
 		</tr>
 		<tr>
 			<th>Drop</th>
-			<td><input type="submit" value="Execute" class="nette-debug-command-tool-ajax" name="drop"></td>
+			<td><input type="submit" value="Execute" class="nette-addons-command-ajax" name="drop"></td>
 		</tr>
 	</table>
 </div>
+</div>
 
 <style type="text/css">
-#nette-debug-command-tool {
+#nette-debug .nette-addons-command {
 	width: 100%;
 }
 
-#nette-debug-command-tool input {
+#nette-debug  .nette-addons-command input {
 	padding: 2px;
 	background: #eee;
 	border: 1px solid #ccc;
 }
 
-#nette-debug-command-tool input:hover {
+#nette-debug .nette-addons-command input:hover {
 	background: #666;
 	color: #fff;
 	border: 1px solid #444;
 }
 
-#nette-debug-command-tool .success {
+#nette-debug .nette-addons-command .success {
 	background: #A3F06C;
 	border: 1px solid #5FA92A;
 	padding: 1em;
 	margin-bottom: 5px;
 }
 
-#nette-debug-command-tool .error {
+#nette-debug .nette-addons-command .error {
 	background: #FAD3C4;
 	border: 1px solid #D4C4C9;
 	padding: 1em;
@@ -60,7 +62,7 @@
 
 	var commandPanel = {
 		init: function () {
-			$('.nette-debug-command-tool-ajax').bind('click', function (e) {
+			$('.nette-addons-command-ajax').bind('click', function (e) {
 				commandPanel.commit(this.name);
 			})
 		},
@@ -71,7 +73,7 @@
 			xmlHttp.onreadystatechange = function() {
 				if (xmlHttp.readyState == 4) {
 
-					var status = $('#nette-debug-command-tool-status').dom();
+					var status = $('#nette-addons-command-status').dom();
 
 					if (xmlHttp.status == 200) {
 						message = JSON.parse(xmlHttp.responseText);
