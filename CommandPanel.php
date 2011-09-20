@@ -46,8 +46,13 @@ class CommandPanel implements IBarPanel
 	 */
 	public function getPanel()
 	{
+		$template = new \Nette\Templating\FileTemplate;
+		$template->setCacheStorage(Environment::getContext()->templateCacheStorage);
+		$template->setFile(dirname(__FILE__) . "/command.panel.latte");
+		$template->registerFilter(new \Nette\Latte\Engine());
+		$template->presenter = Environment::getApplication()->getPresenter();
 		ob_start();
-		require_once __DIR__ . '/command.panel.latte';
+		$template->render();
 		return ob_get_clean();
 	}
 
