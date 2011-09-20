@@ -1,6 +1,9 @@
 <?php
 
-use Nette\IDebugPanel,
+namespace Panels;
+
+use
+ Nette\Diagnostics\IBarPanel,
  Doctrine\ORM\EntityManager,
  Nette\Environment,
  Doctrine\ORM\Tools\SchemaTool;
@@ -8,7 +11,7 @@ use Nette\IDebugPanel,
 /**
  * @author David Morávek
  */
-class SchemaPanel implements IDebugPanel
+class SchemaPanel implements IBarPanel
 {
 
 
@@ -68,13 +71,14 @@ class SchemaPanel implements IDebugPanel
 	public function processRequest($em)
 	{
 		$request = Environment::getHttpRequest();
+		$response = Environment::getHttpResponse();
 
 		if ($request->isPost() && $request->isAjax() && $request->getHeader('X-Schema-Client')) {
 
 			$cmd = file_get_contents('php://input', TRUE);
 			$schemaTool = new SchemaTool($em);
 			$metadatas = $em->getMetadataFactory()->getAllMetadata();
-
+			$message = array();
 			try {
 				switch ($cmd) {
 					case 'create':
@@ -93,12 +97,12 @@ class SchemaPanel implements IDebugPanel
 				}
 				$message['text'] = ucfirst($cmd) . ' query was successfully executed';
 				$message['cls'] = 'success';
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$message['text'] = $e->getMessage();
 				$message['cls'] = 'error';
 			}
-			$response = new \Nette\Application\JsonResponse($message);
-			$response->send();
+			$json = new \Nette\Application\Responses\JsonResponse($message);
+			$json->send($request, $response);
 			exit;
 		}
 	}
@@ -108,9 +112,9 @@ class SchemaPanel implements IDebugPanel
 	/**
 	 * @param EntityManager $em
 	 */
-	public static function register(EntityManager $em = NULL)
+	public static function register(EntityManager $em)
 	{
-		Nette\Debug::addPanel(new static($em ? $em : Environment::getService('Doctrine\ORM\EntityManager')));
+		\Nette\Diagnostics\Debugger::addPanel(new static($em));
 	}
 
 }
