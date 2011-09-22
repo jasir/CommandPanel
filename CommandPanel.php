@@ -1,32 +1,38 @@
 <?php
 
-namespace Panels;
+namespace Panels\CommandPanel;
 
 use
  Nette\Diagnostics\IBarPanel,
  Doctrine\ORM\EntityManager,
  Nette\Environment,
+ Nette\DI\Container,
  Doctrine\ORM\Tools\SchemaTool;
+
 
 /**
  * @author David Morávek
  * @author jasir
  */
-class CommandPanel implements IBarPanel
+class Panel extends \Nette\Object implements IBarPanel
 {
 
 
-
 	/**
-	 * @param EntityManager $em
+	 * @var \Nette\DI\Container
 	 */
-	public function __construct($em)
-	{
-		$this->processRequest($em);
+	private $container;
+
+	private $commands = array();
+
+	public function __construct(\Nette\DI\Container $container) {
+		$this->container = $container;
 	}
 
-
-
+	public function addCommand($group, $command)
+	{
+		$this->commands[$group][$command->name] = $command;
+	}
 	/**
 	 * IDebugPanel
 	 *
@@ -51,6 +57,7 @@ class CommandPanel implements IBarPanel
 		$template->setFile(dirname(__FILE__) . "/command.panel.latte");
 		$template->registerFilter(new \Nette\Latte\Engine());
 		$template->presenter = Environment::getApplication()->getPresenter();
+		$template->commands = $this->commands;
 		ob_start();
 		$template->render();
 		return ob_get_clean();
@@ -74,39 +81,25 @@ class CommandPanel implements IBarPanel
 	 * Ajax request process
 	 * @var EntityManager
 	 */
-	public function processRequest($em)
+	protected function processRequest()
 	{
-		$request = Environment::getHttpRequest();
-		$response = Environment::getHttpResponse();
+		$request = $this->container->httpRequest;
+		$response = $this->container->httpResponse;
 
 		if ($request->isPost() && $request->isAjax() && $request->getHeader('X-CommandTool-Client')) {
 
 			$cmd = file_get_contents('php://input', TRUE);
-			$schemaTool = new SchemaTool($em);
-			$metadatas = $em->getMetadataFactory()->getAllMetadata();
-			$message = array();
-			try {
-				switch ($cmd) {
-					case 'create':
-						$schemaTool->createSchema($metadatas);
-						break;
-					case 'update':
-						$schemaTool->updateSchema($metadatas);
-						break;
-					case 'drop':
-						$schemaTool->dropSchema($metadatas);
-						break;
-
-					default:
-						throw new InvalidArgumentException('Invalid argument!');
-						break;
+				try {
+					list($group, $name) = explode(':::', $cmd);
+					$command = \Nette\Utils\Arrays::get($this->commands, array($group, $name), NULL);
+					$result = $command->invoke($this->container);
+					$message['text'] = $result;
+					$message['cls'] = 'success';
+				} catch (\Exception $e) {
+					$message['text'] = $e->getMessage();
+					$message['cls'] = 'error';
 				}
-				$message['text'] = ucfirst($cmd) . ' query was successfully executed';
-				$message['cls'] = 'success';
-			} catch (\Exception $e) {
-				$message['text'] = $e->getMessage();
-				$message['cls'] = 'error';
-			}
+
 			$json = new \Nette\Application\Responses\JsonResponse($message);
 			$json->send($request, $response);
 			exit;
@@ -118,9 +111,9 @@ class CommandPanel implements IBarPanel
 	/**
 	 * @param EntityManager $em
 	 */
-	public static function register(EntityManager $em)
-	{
-		\Nette\Diagnostics\Debugger::addPanel(new static($em));
+	public function register(\Nette\Diagnostics\Bar $bar) {
+		$this->processRequest();
+		\Nette\Diagnostics\Debugger::$bar->addPanel($this);
 	}
 
 }

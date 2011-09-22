@@ -4,18 +4,16 @@
 	<div class="nette-addons-command-status" id="nette-addons-command-status"></div>
 
 	<table>
+		{foreach $commands as $groupname => $group}
+		<tr><th colspan=3>{$groupname}</th></tr>
+		{foreach $group as $name=>$command}
 		<tr>
-			<th>Create</th>
-			<td><input type="submit" value="Execute" class="nette-addons-command-ajax" name="create"></td>
+			<th>{$command->title}</th>
+			<td>{$command->description}</td>
+			<td><input type="submit" value="Execute" class="nette-addons-command-ajax" name="{=$groupname . ':::' . $name}"></td>
 		</tr>
-		<tr>
-			<th>Update</th>
-			<td><input type="submit" value="Execute" class="nette-addons-command-ajax" name="update"></td>
-		</tr>
-		<tr>
-			<th>Drop</th>
-			<td><input type="submit" value="Execute" class="nette-addons-command-ajax" name="drop"></td>
-		</tr>
+		{/foreach}
+		{/foreach}
 	</table>
 </div>
 
@@ -84,7 +82,7 @@
 					}
 				}
 			}
-			xmlHttp.open("POST", <?php echo json_encode(\Nette\Environment::getApplication()->getPresenter()->link('this')); ?>, true);
+			xmlHttp.open("POST", <?php echo json_encode($presenter->link('this')); ?>, true);
 			xmlHttp.setRequestHeader('X-CommandTool-Client', 'devel');
 			xmlHttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 			xmlHttp.send(cmd);
