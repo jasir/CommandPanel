@@ -97,8 +97,13 @@ class Panel extends \Nette\Object implements IBarPanel
 				try {
 					list($group, $name) = explode(':::', $cmd);
 					$command = \Nette\Utils\Arrays::get($this->commands, array($group, $name), NULL);
+					\Nette\Diagnostics\Debugger::timer('CommandPanel');
 					$result = $command->invoke($this->container);
-					$message['text'] = $result;
+					$time = \Nette\Diagnostics\Debugger::timer('CommandPanel');
+					if ($result === NULL) {
+						$result = $command->title . ' - OK';
+					}
+					$message['text'] = $result . "<br><small>" . number_format($time,4) . " seconds</small>";
 					$message['cls'] = 'success';
 				} catch (\Exception $e) {
 					$message['text'] = $e->getMessage();
