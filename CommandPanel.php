@@ -1,4 +1,9 @@
 <?php
+/**
+ * @todo - odstranit z commandu name - zbytecne, mel by se generovat sam jako webalize
+ * @todo - command - pridat create pro fluent interface + konstruktor bez parametru
+ */
+
 
 namespace Panels\CommandPanel;
 
