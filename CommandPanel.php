@@ -34,8 +34,10 @@ class Panel extends \Nette\Object implements IBarPanel
 		$this->container = $container;
 	}
 
-	public function addCommand($group, $command)
-	{
+	public function addCommand($group, $command) {
+		if (isset($this->commands[$group][$command->name])) {
+			throw new \Nette\InvalidStateException("Panels\CommandPanel : Command '{$command->name}' is already in group '{$group}'");
+		}
 		$this->commands[$group][$command->name] = $command;
 	}
 	/**

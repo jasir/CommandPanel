@@ -2,51 +2,48 @@
 
 namespace Panels\CommandPanel\Commands;
 
-class Doctrine {
+use \Panels\CommandPanel\Command;
 
-	/* --- Properties --- */
+class Doctrine {
 
 	/* --- Public API --- */
 
 	public static function register($panel, $group = 'Doctrine') {
-		$panel->addCommand($group, new \Panels\CommandPanel\Command(
-			'Create schema',
-			'orm:create-schema',
-			'Creates doctrine schema',
-			function ($container) {
-				$em=$container->entityManager;
-				$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-				$metadatas = $em->getMetadataFactory()->getAllMetadata();
-				$schemaTool->createSchema($metadatas);
-				return 'Schema created';
-			}
-		));
-		$panel->addCommand($group, new \Panels\CommandPanel\Command(
-			'Update scheme',
-			'orm:update-scheme',
-			'Updates doctrine schema',
-			function ($container) {
-				$em=$container->entityManager;
-				$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-				$metadatas = $em->getMetadataFactory()->getAllMetadata();
-				$schemaTool->updateSchema($metadatas);
-				return 'Schema updated';
-			}
-		));
-		$panel->addCommand($group, new \Panels\CommandPanel\Command(
-			'Drop scheme',
-			'orm:drop-scheme',
-			'Drops doctrine scheme',
-			function ($container) {
-				$em=$container->entityManager;
-				$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-				$metadatas = $em->getMetadataFactory()->getAllMetadata();
-				$schemaTool->dropSchema($metadatas);
-				return 'Schema dropped';
-			}
-		));
+		
+		$panel->addCommand($group, 
+				Command::create(
+					'Create Schema',
+					function ($container) {
+						$em=$container->entityManager;
+						$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
+						$metadatas = $em->getMetadataFactory()->getAllMetadata();
+						$schemaTool->createSchema($metadatas);
+					}
+				)
+		);
+
+		$panel->addCommand($group, 
+				Command::create(
+					'Update Schema',
+					function ($container) {
+						$em=$container->entityManager;
+						$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
+						$metadatas = $em->getMetadataFactory()->getAllMetadata();
+						$schemaTool->updateSchema($metadatas);
+					}
+				)
+		);
+
+		$panel->addCommand($group, 
+				Command::create(
+					'Drop Schema',
+					function ($container) {
+						$em=$container->entityManager;
+						$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
+						$metadatas = $em->getMetadataFactory()->getAllMetadata();
+						$schemaTool->dropSchema($metadatas);
+					}
+				)
+		);
 	}
-
-	/* --- Hidden details --- */
-
 }
