@@ -8,10 +8,11 @@
 		<tr><th colspan=2 style="font-size:1.2em">{$groupname}</th></tr>
 		{foreach $group as $name=>$command}
 		<tr>
-			<td style="vertical-align: middle;"><strong>{$command->title}</strong>{if $command->description}
-			
-			<br><span style="font-size:0.8em; font-style: italic;">{$command->description}</span>
-			{/if}
+			<td style="vertical-align: middle;">
+				<strong>{$command->title}</strong>
+				{if $command->description}
+					<br><span style="font-size:0.8em; font-style: italic;">{$command->description}</span>
+				{/if}
 			</td>
 			<td style="vertical-align: middle;"><input type="submit" value="Execute" class="nette-addons-command-ajax" name="{=$groupname . ':::' . $name}"/></td>
 		</tr>
