@@ -10,7 +10,7 @@ class Cache {
 
 	/* --- Public API --- */
 
-	public static function register($panel, $group = 'Cache & Session') {
+	public static function register(\Panels\CommandPanel\Panel $panel, $group = 'Cache & Session') {
 		$panel->addCommand($group, 
 				Command::create(
 					'Clear all',

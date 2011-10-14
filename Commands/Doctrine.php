@@ -8,7 +8,7 @@ class Doctrine {
 
 	/* --- Public API --- */
 
-	public static function register($panel, $group = 'Doctrine') {
+	public static function register(\Panels\CommandPanel\Panel $panel, $group = 'Doctrine') {
 		
 		$panel->addCommand($group, 
 				Command::create(
