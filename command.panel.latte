@@ -1,7 +1,12 @@
 <h1>CommandsTool</h1>
 
 <div class="nette-inner nette-addons-command">
-	<div class="nette-addons-command-status" id="nette-addons-command-status"></div>
+
+	<div class="nette-addons-command-status" id="nette-addons-command-status">
+	</div>
+	<div class="nette-addons-command-output" id="nette-addons-command-output">
+	</div>
+
 
 	<table>
 		{foreach $commands as $groupname => $group}
@@ -49,8 +54,15 @@
 	background: #FAD3C4;
 	border: 1px solid #D4C4C9;
 	padding: 1em;
-	margin-bottom: 5px;
+	margin-bottom: 3px;
 }
+
+#nette-debug .nette-addons-command-output {
+	background: #ccc;
+	margin-bottom:3px;
+}
+
+
 </style>
 
 <script type="text/javascript">
@@ -74,15 +86,17 @@
 				if (xmlHttp.readyState == 4) {
 
 					var status = $('#nette-addons-command-status').dom();
+					var output = $('#nette-addons-command-output').dom();
 
 					if (xmlHttp.status == 200) {
 						message = JSON.parse(xmlHttp.responseText);
-
 						status.innerHTML = message.text;
 						status.className = message.cls;
+						output.innerHTML = message.output;
 					} else {
 						status.innerHTML = 'Unhandled exception';
 						status.className = 'error';
+						output.innerHTML = '';
 					}
 				}
 			}

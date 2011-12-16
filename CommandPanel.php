@@ -96,21 +96,28 @@ class Panel extends \Nette\Object implements IBarPanel
 		if ($request->isPost() && $request->isAjax() && $request->getHeader('X-CommandTool-Client')) {
 
 			$cmd = file_get_contents('php://input', TRUE);
-				try {
 					list($group, $name) = explode(':::', $cmd);
 					$command = \Nette\Utils\Arrays::get($this->commands, array($group, $name), NULL);
 					\Nette\Diagnostics\Debugger::timer('CommandPanel');
-					$result = $command->invoke($this->container);
-					$time = \Nette\Diagnostics\Debugger::timer('CommandPanel');
-					if ($result === NULL) {
-						$result = $command->title . ' - OK';
+					ob_start();
+					try {
+						$result = $command->invoke($this->container);
+						$output = ob_get_contents();
+						ob_end_clean();
+						$time = \Nette\Diagnostics\Debugger::timer('CommandPanel');
+						if ($result === NULL) {
+							$result = $command->title . ' - OK';
+						}
+						$message['text'] = $result . "<br><small>" . number_format($time,4) . " seconds</small>";
+						$message['cls'] = 'success';
+						$message['output'] = $output;
+					} catch (\Exception $e) {
+						$output = ob_get_contents();
+						ob_end_clean();
+						$message['text'] = $e->getMessage();
+						$message['cls'] = 'error';
+						$message['output'] = $output;
 					}
-					$message['text'] = $result . "<br><small>" . number_format($time,4) . " seconds</small>";
-					$message['cls'] = 'success';
-				} catch (\Exception $e) {
-					$message['text'] = $e->getMessage();
-					$message['cls'] = 'error';
-				}
 
 			$json = new \Nette\Application\Responses\JsonResponse($message);
 			$json->send($request, $response);
