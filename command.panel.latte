@@ -1,3 +1,11 @@
+{define #toggler}
+	{default open => false}
+	{default rel => 'next'}
+	{default text => ''}
+	{? if ($rel !== 'next' && substr($rel, 0, 1) != '#') $rel = '#' . $rel}
+	<a class="nette-toggler" href="#" rel="{$rel}">{$text}<abbr>{if $text}&nbsp;{/if}{if $open}&#x25bc{else}&#x25ba{/if}</abbr></a>
+{/define}
+
 <h1>CommandsTool</h1>
 
 <div class="nette-inner nette-addons-command">
@@ -7,23 +15,29 @@
 	<div class="nette-addons-command-output" id="nette-addons-command-output">
 	</div>
 
-
-	<table>
+		<table width="100%">
 		{foreach $commands as $groupname => $group}
-		<tr><th colspan=2 style="font-size:1.2em">{$groupname}</th></tr>
-		{foreach $group as $name=>$command}
+		{var id = "nette-addons-command-" . md5($groupname)}
+		{var open => false}
 		<tr>
-			<td style="vertical-align: middle;">
-				<strong>{$command->title}</strong>
-				{if $command->description}
-					<br><span style="font-size:0.8em; font-style: italic;">{$command->description}</span>
-				{/if}
-			</td>
-			<td style="vertical-align: middle;"><input type="submit" value="Execute" class="nette-addons-command-ajax" name="{=$groupname . ':::' . $name}"/></td>
+			<th colspan=2 style="font-size:1.2em;">{include #toggler open=>$open, rel=>$id, text=>$groupname}</th>
 		</tr>
+		<tbody id="{$id}" class="nette-hidden">
+		{foreach $group as $name=>$command}
+			<tr>
+				<td style="vertical-align: middle;">
+					<strong>{$command->title}</strong>
+					{if $command->description}
+						<br><span style="font-size:0.8em; font-style: italic;">{$command->description}</span>
+					{/if}
+				</td>
+				<td style="vertical-align: middle;width:10px;"><input type="submit" value="Execute" class="nette-addons-command-ajax" name="{=$groupname . ':::' . $name}"/></td>
+			</tr>
 		{/foreach}
+		</tbody>
 		{/foreach}
-	</table>
+		</table>
+
 </div>
 
 <style type="text/css">
